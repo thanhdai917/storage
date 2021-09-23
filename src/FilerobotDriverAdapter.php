@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Storage\Flysystem;
+namespace Thanhdai\Storage;
 
 use League\Flysystem\Util;
 use League\Flysystem\Config;

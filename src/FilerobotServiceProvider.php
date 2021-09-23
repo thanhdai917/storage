@@ -1,6 +1,6 @@
 <?php
 
-namespace Storage\Flysystem;
+namespace Thanhdai\Storage;
 
 use League\Flysystem\Filesystem;
 use Illuminate\Support\Facades\Storage;
