@@ -1,0 +1,22 @@
+{
+  "name": "scaleflex/filerobot",
+  "description": "API Connect Filerobot",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Thanh dai",
+      "email": "thanhdai917@gmail.com"
+    }
+  ],
+  "require": {
+    "php": ">=5.5.0",
+    "league/flysystem": "~1.0",
+    "guzzlehttp/guzzle": "^6.5.5 || ^7.0.1",
+    "illuminate/http": "~8.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "Scaleflex\\Filerobot\\": "src/"
+    }
+  }
+}
