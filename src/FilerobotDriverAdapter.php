@@ -10,29 +10,55 @@ use League\Flysystem\Adapter\AbstractAdapter;
 use League\Flysystem\Adapter\CanOverwriteFiles;
 use League\Flysystem\Adapter\Polyfill\StreamedReadingTrait;
 
-class FilerobotDriverAdapter extends AbstractAdapter implements CanOverwriteFiles
+class FilerobotDriverAdapter extends AbstractAdapter
 {
 	use StreamedReadingTrait;
 
+	/**
+	 * @var mixed
+	 */
 	private $key;
+	/**
+	 * @var FilerobotAdapter
+	 */
 	private $scaleflex;
 
+	/**
+	 * FilerobotDriverAdapter constructor.
+	 *
+	 * @param $config
+	 */
 	public function __construct($config)
 	{
 		$this->key       = $config['key'];
 		$this->scaleflex = new FilerobotAdapter($config['key']);
 	}
 
+	/**
+	 * @param          $path
+	 * @param          $resource
+	 * @param  Config  $config
+	 */
 	public function writeStream($path, $resource, Config $config)
 	{
 		return $this->write($path, $resource, $config);
 	}
 
+	/**
+	 * @param          $path
+	 * @param          $contents
+	 * @param  Config  $config
+	 */
 	public function write($path, $contents, Config $config)
 	{
 		return $this->upload($path, $contents, $config);
 	}
 
+	/**
+	 * @param          $path
+	 * @param          $content
+	 * @param  Config  $config
+	 */
 	public function upload($path, $content, Config $config)
 	{
 
@@ -55,18 +81,34 @@ class FilerobotDriverAdapter extends AbstractAdapter implements CanOverwriteFile
 		}
 	}
 
+	/**
+	 * @param          $path
+	 * @param          $contents
+	 * @param  Config  $config
+	 */
 	public function update($path, $contents, Config $config)
 	{
 		echo 'update';
 		// TODO: Implement update() method.
 	}
 
+	/**
+	 * @param          $path
+	 * @param          $resource
+	 * @param  Config  $config
+	 */
 	public function updateStream($path, $resource, Config $config)
 	{
 		echo 'updateStream';
 		// TODO: Implement updateStream() method.
 	}
 
+	/**
+	 * @param $path
+	 * @param $newpath
+	 *
+	 * @return string[]
+	 */
 	public function rename($path, $newpath)
 	{
 		$checkPathIs = $this->checkPathIs($path);
@@ -76,10 +118,15 @@ class FilerobotDriverAdapter extends AbstractAdapter implements CanOverwriteFile
 			return $this->scaleflex->rename_folder($path, $newpath);
 		}
 		return [
-			'error' => 'Uuid notworking please try again'
+			'error' => 'Uuid not working please try again'
 		];
 	}
 
+	/**
+	 * @param $path
+	 *
+	 * @return mixed
+	 */
 	public function checkPathIs($path)
 	{
 		$result = $this->scaleflex->detail_file($path);
@@ -89,6 +136,12 @@ class FilerobotDriverAdapter extends AbstractAdapter implements CanOverwriteFile
 		return $result;
 	}
 
+	/**
+	 * @param $path
+	 * @param $newpath
+	 *
+	 * @return string[]
+	 */
 	public function copy($path, $newpath)
 	{
 		$checkPathIs = $this->checkPathIs($path);
@@ -99,35 +152,60 @@ class FilerobotDriverAdapter extends AbstractAdapter implements CanOverwriteFile
 		}
 
 		return [
-			'error' => 'Uuid notworking please try again'
+			'error' => 'Uuid not working please try again'
 		];
 		// TODO: Implement copy() method.
 	}
 
+	/**
+	 * @param $path
+	 *
+	 * @return mixed
+	 */
 	public function delete($path)
 	{
 		return $this->scaleflex->delete_file($path);
 		// TODO: Implement delete() method.
 	}
 
+	/**
+	 * @param $dirname
+	 *
+	 * @return mixed
+	 */
 	public function deleteDir($dirname)
 	{
 		return $this->scaleflex->delete_folder($dirname);
 		// TODO: Implement deleteDir() method.
 	}
 
+	/**
+	 * @param          $dirname
+	 * @param  Config  $config
+	 *
+	 * @return mixed
+	 */
 	public function createDir($dirname, Config $config)
 	{
 		return $this->scaleflex->create_folder($dirname);
 		// TODO: Implement createDir() method.
 	}
 
+	/**
+	 * @param $path
+	 * @param $visibility
+	 */
 	public function setVisibility($path, $visibility)
 	{
 		echo 'setVisibility';
 		// TODO: Implement setVisibility() method.
 	}
 
+	/**
+	 * @param $path
+	 *
+	 * @return mixed
+	 */
 	public function has($path)
 	{
 		$path = Util::normalizePath($path);
@@ -135,6 +213,11 @@ class FilerobotDriverAdapter extends AbstractAdapter implements CanOverwriteFile
 		return $path;
 	}
 
+	/**
+	 * @param $path
+	 *
+	 * @return mixed
+	 */
 	public function read($path)
 	{
 		$path   = $this->applyPathPrefix($path);
@@ -145,12 +228,21 @@ class FilerobotDriverAdapter extends AbstractAdapter implements CanOverwriteFile
 		return $result;
 	}
 
+	/**
+	 * @param $path
+	 */
 	public function readStream($path)
 	{
 		echo 'readStream';
 		// TODO: Implement readStream() method.
 	}
 
+	/**
+	 * @param  string  $directory
+	 * @param  false   $recursive
+	 *
+	 * @return array
+	 */
 	public function listContents($directory = '', $recursive = false)
 	{
 		$listing = $this->scaleflex->list_folder($directory);
@@ -185,30 +277,45 @@ class FilerobotDriverAdapter extends AbstractAdapter implements CanOverwriteFile
 		return $result;
 	}
 
+	/**
+	 * @param $path
+	 */
 	public function getMetadata($path)
 	{
 		echo 'getMetadata';
 		// TODO: Implement getMetadata() method.
 	}
 
+	/**
+	 * @param $path
+	 */
 	public function getSize($path)
 	{
 		echo 'getSize';
 		// TODO: Implement getSize() method.
 	}
 
+	/**
+	 * @param $path
+	 */
 	public function getMimetype($path)
 	{
 		echo 'getMimetype';
 		// TODO: Implement getMimetype() method.
 	}
 
+	/**
+	 * @param $path
+	 */
 	public function getTimestamp($path)
 	{
 		echo 'getTimestamp';
 		// TODO: Implement getTimestamp() method.
 	}
 
+	/**
+	 * @param $path
+	 */
 	public function getVisibility($path)
 	{
 		echo 'getVisibility';
