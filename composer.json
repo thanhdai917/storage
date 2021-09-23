@@ -16,7 +16,7 @@
   },
   "autoload": {
     "psr-4": {
-      "Scaleflex\\Filerobot\\": "src/"
+      "Storage\\Flysystem\\": "src/"
     }
   }
 }
