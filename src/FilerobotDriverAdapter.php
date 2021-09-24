@@ -272,7 +272,7 @@ class FilerobotDriverAdapter extends AbstractAdapter
 		foreach ($array['folders'] as $key => $row) {
 			$result[$key]['uuid']        = $row['uuid'];
 			$result[$key]['name']        = $row['name'];
-			$result[$key]['path']        = $row['name'];
+			$result[$key]['path']        = $row['path'];
 			$result[$key]['dirname']     = $path;
 		}
 		return $result;
