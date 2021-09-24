@@ -132,7 +132,7 @@ return Storage::disk('filerobot')->rename($uuid, $name_change);
 #### Move folder
 Will move a folder, identified by its folder_uuid to a new location (folder) which can be identified by destination_folder_uuid.
 ``` php
-return Storage::disk('filerobot')->copy($uuid, $name_change);
+return Storage::disk('filerobot')->copy($folder_uuid, $destination_folder_uuid);
 ```
 
 #### Delete folder

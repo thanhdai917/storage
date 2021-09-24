@@ -30,11 +30,8 @@ class FilerobotServiceProvider extends ServiceProvider
 			if (isset($config['key'])) {
 				$options['key'] = $config['key'];
 			}
-
 			$adapter = new FilerobotDriverAdapter($options);
-
 			$config['disable_asserts'] = true;
-
 			return new Filesystem($adapter, $config);
 		});
 	}
