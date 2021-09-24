@@ -28,7 +28,7 @@ Storage::disk('filerobot')
 ### Files operations
 #### List or search files
 Lists all files in your Filerobot container. You can alternatively search by providing a search string. Can be recursive.
-example: type-folder_name
+example: type:folder_name
 ``` php
 return Storage::disk('filerobot')->listContents('file-api-demo', false);
 ```
@@ -113,7 +113,7 @@ Storage::disk('filerobot')->put($name_upload, $image,$config);
 ### Folders operations
 #### List and search folders 
 Lists all folders in your Filerobot container. You can search by providing a search string. Can be recursive.
-example: type-folder_name
+example: type:folder_name
 ``` php
 return Storage::disk('filerobot')->listContents('folder-api-demo', false);
 ```
