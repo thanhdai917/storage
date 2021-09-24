@@ -249,15 +249,16 @@ class FilerobotDriverAdapter extends AbstractAdapter
 	 */
 	public function listContents($directory = '', $recursive = false)
 	{
-		$arrayDirector = explode('-',$directory);
-		$parsDirectory = str_replace($arrayDirector[0].'-','',$directory);
+		$arrayDirector = explode(':',$directory);
+		$parsDirectory = str_replace($arrayDirector[0].':','/',$directory);
 		if($arrayDirector[0] == 'file'){
 			$listing = $this->scaleflex->list_file($parsDirectory);
 			$result = $this->normaliseObject($listing, $directory);
 		}elseif($arrayDirector[0] == 'folder'){
 			$listing = $this->scaleflex->list_folder($parsDirectory);
-			return $this->normaliseObjectFolder($listing, $directory);
+			$result = $this->normaliseObjectFolder($listing, $directory);
 		}
+		return $result;
 	}
 
 	/**
