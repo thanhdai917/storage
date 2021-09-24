@@ -61,7 +61,6 @@ class FilerobotDriverAdapter extends AbstractAdapter
 	 */
 	public function upload($path, $content, Config $config)
 	{
-
 		if (is_resource($content)) {
 
 		} else {
@@ -150,7 +149,6 @@ class FilerobotDriverAdapter extends AbstractAdapter
 		} elseif (!empty($checkPathIs['folder'])) {
 			return $this->scaleflex->move_folder($path, $newpath);
 		}
-
 		return [
 			'error' => 'Uuid not working please try again'
 		];
@@ -189,7 +187,6 @@ class FilerobotDriverAdapter extends AbstractAdapter
 	{
 
 		$this->scaleflex->create_folder($dirname);
-		
 		return $this->normaliseObject($listing, $directory);
 		// TODO: Implement createDir() method.
 	}
@@ -212,7 +209,6 @@ class FilerobotDriverAdapter extends AbstractAdapter
 	public function has($path)
 	{
 		$path = Util::normalizePath($path);
-
 		return $path;
 	}
 
@@ -225,9 +221,7 @@ class FilerobotDriverAdapter extends AbstractAdapter
 	{
 		$path   = $this->applyPathPrefix($path);
 		$result = $this->checkPathIs($path);
-
 		$contents = [];
-
 		if (!empty($result['file'])) {
 			$contents['contents'] = $result['file'];
 		} elseif (!empty($result['folder'])) {
@@ -256,15 +250,12 @@ class FilerobotDriverAdapter extends AbstractAdapter
 	public function listContents($directory = '', $recursive = false)
 	{
 		$arrayDirector = explode('-',$directory);
-
 		$parsDirectory = str_replace($arrayDirector[0].'-','',$directory);
-
 		if($arrayDirector[0] == 'file'){
 			$listing = $this->scaleflex->list_file($parsDirectory);
 			$result = $this->normaliseObject($listing, $directory);
 		}elseif($arrayDirector[0] == 'folder'){
 			$listing = $this->scaleflex->list_folder($parsDirectory);
-//			dd($listing);
 			return $this->normaliseObjectFolder($listing, $directory);
 		}
 	}
