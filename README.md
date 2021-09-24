@@ -91,7 +91,7 @@ $config = [
 $content = [
     [
         "name" => 'test03.png',
-        "url"  => 'https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.24h.com.vn%2Fgiai-tri%2Fvi-dau-sieu-pham-hoat-hinh-he-doraemon-vua-quen-vua-la-c731a1053483.html&psig=AOvVaw0ADpdDFBLB5CU33wMlGuc7&ust=1632380674758000&source=images&cd=vfe&ved=0CAsQjRxqFwoTCMD0seOLkvMCFQAAAAAdAAAAABAJ'
+        "url"  => 'https://www.louisvuitton.com/images/U_Tr_Brand_campaign_Milos_DI3.jpg?wid=2048'
     ]
 ];
 
