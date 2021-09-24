@@ -16,6 +16,11 @@ Your config/filesystems.php.
     'key' => env('FILEROBOT_KEY_ID'),
 ]
 ```
+
+Your .env
+``` php
+FILEROBOT_KEY_ID=fa5fe3303dd34e1da4810915c7c3fd6f
+```
 ## Usage
 ### Files operations
 #### List or search files
