@@ -88,7 +88,8 @@ class FilerobotDriverAdapter extends AbstractAdapter
 	 */
 	public function update($path, $contents, Config $config)
 	{
-		return $this->upload($path, $contents, $config);
+		echo 'update';
+		// TODO: Implement update() method.
 	}
 
 	/**
@@ -98,7 +99,8 @@ class FilerobotDriverAdapter extends AbstractAdapter
 	 */
 	public function updateStream($path, $resource, Config $config)
 	{
-		return $this->upload($path, $contents, $config);
+		echo 'updateStream';
+		// TODO: Implement updateStream() method.
 	}
 
 	/**
@@ -185,7 +187,10 @@ class FilerobotDriverAdapter extends AbstractAdapter
 	 */
 	public function createDir($dirname, Config $config)
 	{
-		return $this->scaleflex->create_folder($dirname);
+
+		$this->scaleflex->create_folder($dirname);
+		
+		return $this->normaliseObject($listing, $directory);
 		// TODO: Implement createDir() method.
 	}
 
@@ -221,15 +226,16 @@ class FilerobotDriverAdapter extends AbstractAdapter
 		$path   = $this->applyPathPrefix($path);
 		$result = $this->checkPathIs($path);
 
-		if (!empty($result['file'])) {
-			return $result['contents'] = $result['file'];
-		} elseif (!empty($result['folder'])) {
-			return $result['contents'] = $result['folder'];
-		}
+		$contents = [];
 
-		return [
-			'contents' => 'Uuid not working please try again'
-		];
+		if (!empty($result['file'])) {
+			$contents['contents'] = $result['file'];
+		} elseif (!empty($result['folder'])) {
+			$contents['contents'] = $result['file'];
+		}else{
+			$contents['contents'] = 'Uuid not working please try again';
+		}
+		return $contents;
 	}
 
 	/**
@@ -249,15 +255,40 @@ class FilerobotDriverAdapter extends AbstractAdapter
 	 */
 	public function listContents($directory = '', $recursive = false)
 	{
-		$listing = $this->scaleflex->list_file($directory);
+		$arrayDirector = explode('-',$directory);
 
-		return $this->normaliseObject($listing, $directory);
+		$parsDirectory = str_replace($arrayDirector[0].'-','',$directory);
+
+		if($arrayDirector[0] == 'file'){
+			$listing = $this->scaleflex->list_file($parsDirectory);
+			$result = $this->normaliseObject($listing, $directory);
+		}elseif($arrayDirector[0] == 'folder'){
+			$listing = $this->scaleflex->list_folder($parsDirectory);
+//			dd($listing);
+			return $this->normaliseObjectFolder($listing, $directory);
+		}
 	}
 
 	/**
-	 * Get normalised files array from Google_Service_Drive_DriveFile
+	 * Get normalised files array
 	 *
-	 *            Parent directory itemId path
+	 *
+	 * @return array Normalised files array
+	 */
+	protected function normaliseObjectFolder($array, $path): array
+	{
+		$result = [];
+		foreach ($array['folders'] as $key => $row) {
+			$result[$key]['uuid']        = $row['uuid'];
+			$result[$key]['name']        = $row['name'];
+			$result[$key]['path']        = $row['name'];
+			$result[$key]['dirname']     = $path;
+		}
+		return $result;
+	}
+
+	/**
+	 * Get normalised folder array
 	 *
 	 * @return array Normalised files array
 	 */
@@ -280,7 +311,6 @@ class FilerobotDriverAdapter extends AbstractAdapter
 		}
 		return $result;
 	}
-
 	/**
 	 * @param $path
 	 */
