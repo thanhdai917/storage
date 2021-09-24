@@ -88,8 +88,7 @@ class FilerobotDriverAdapter extends AbstractAdapter
 	 */
 	public function update($path, $contents, Config $config)
 	{
-		echo 'update';
-		// TODO: Implement update() method.
+		return $this->upload($path, $contents, $config);
 	}
 
 	/**
@@ -99,8 +98,7 @@ class FilerobotDriverAdapter extends AbstractAdapter
 	 */
 	public function updateStream($path, $resource, Config $config)
 	{
-		echo 'updateStream';
-		// TODO: Implement updateStream() method.
+		return $this->upload($path, $contents, $config);
 	}
 
 	/**
@@ -223,9 +221,15 @@ class FilerobotDriverAdapter extends AbstractAdapter
 		$path   = $this->applyPathPrefix($path);
 		$result = $this->checkPathIs($path);
 
+		if (!empty($result['file'])) {
+			return $result['contents'] = $result['file'];
+		} elseif (!empty($result['folder'])) {
+			return $result['contents'] = $result['folder'];
+		}
 
-		$result['contents'] = !empty($result['file']) ? $result['file'] : $result['folder'];
-		return $result;
+		return [
+			'error' => 'Uuid not working please try again'
+		];
 	}
 
 	/**

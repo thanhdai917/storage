@@ -23,108 +23,123 @@ FILEROBOT_KEY_ID=fa5fe3303dd34e1da4810915c7c3fd6f
 ```
 ## Usage
 ``` php
-FILEROBOT_KEY_ID=fa5fe3303dd34e1da4810915c7c3fd6f
+Storage::disk('filerobot')
 ```
 ### Files operations
 #### List or search files
 Lists all files in your Filerobot container. You can alternatively search by providing a search string. Can be recursive.
 ``` php
-return $this->filerobot->list_file('/api-demo');
+return Storage::disk('filerobot')->listContents('/api-demo', false);
 ```
-| Parameter | Default | Description |
-| --- | --- | --- |
-| folder | | Folder to start the search from. Case sensitive. |
-| query | | (optional) Search pattern matching the file name or metadata. |
-| order | filename,desc | (optional) Order results by: updated_at created_at Append ,asc or ,desc to get ascending or descending results. Example: updated_at,desc|
-| limit | 50 | (optional) Specifies the maximum number of files to return. [1-4000].|
-| offset | 0 | (optional) Specifies the offset of files to display.|
-| mime | |  (optional) Returns only files from specified mimeType.|
-| format | | (optional) Allows you to export the results as a csv. Example: format=csv |
-
-#### Get file details
-Retrieving a file's details over UUID requires to authenticate against the API.
+You can add collect.
 ``` php
-return $this->filerobot->detail_file($file_uuid);
+return collect(Storage::disk('filerobot')->listContents('/api-demo', false))->where('name','test01')->first();
 ```
 
-#### Rename file
-Renames the file with the value given in the body.
+#### Get file or folder details
+Retrieving a file's or folder details over UUID requires to authenticate against the API.
 ``` php
-return $this->filerobot->rename_file($file_uuid, $new_filename);
+return Storage::disk('filerobot')->read('63accfbe-d1a1-502b-a1f6-47397645000e');
+```
+
+#### Rename file or folder
+Renames the file or folder with the value given in the body.
+``` php
+return Storage::disk('filerobot')->rename($uuid, $name_change);
 ```
 
 #### Move file
-Will move the file to a new folder. The folder will be created if it doesn't already exist.
+Will move the file or folder to a new folder. The folder will be created if it doesn't already exist.
+
 ``` php
-return $this->filerobot->move_file($file_uuid, $folder_uuid);
+return Storage::disk('filerobot')->copy($uuid, $name_change);
 ```
 
 #### Delete file
 Delete a file using its UUID as reference.
 ``` php
-return $this->filerobot->delete_file($file_uuid);
+return Storage::disk('filerobot')->delete($file_uuid);
 ```
 
-#### Upload one or multiple files
+#### Upload files
 Multiple methods are available to suit different needs
 
+``` php
+$config = [
+        'name' => folder_name,
+        'type' => method_upload
+    ];
+Storage::disk('filerobot')->put($name_upload, $image,$config);
+```
 ##### - Method 1 - multipart/form-data request
 ``` php
-return $this->filerobot->upload_file_multipart('/api-demo', 'path/bear.jpg', 'bear.jpg');
+$config = [
+        'name' => 'api-demo',
+        'type' => 'multipart'
+    ];
+$image = public_path('4090e6607e8bea2c9845b12630a927fd.jpg');
+$name_upload = 'test01.png';
+Storage::disk('filerobot')->put($name_upload, $image,$config);
 ```
 
 ##### - Method 2 - URL(s) of remotely hosted file(s)
 ``` php
-return $this->filerobot->upload_file_remote('/api-demo', '[{"name": "new_filename.jpg",  "url":"http://sample.li/boat.jpg" }]');
+$config = [
+			'name' => 'api-demo',
+			'type' => 'remote'
+		];
+$content = [
+    [
+        "name" => 'test03.png',
+        "url"  => 'https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.24h.com.vn%2Fgiai-tri%2Fvi-dau-sieu-pham-hoat-hinh-he-doraemon-vua-quen-vua-la-c731a1053483.html&psig=AOvVaw0ADpdDFBLB5CU33wMlGuc7&ust=1632380674758000&source=images&cd=vfe&ved=0CAsQjRxqFwoTCMD0seOLkvMCFQAAAAAdAAAAABAJ'
+    ]
+];
+
+Storage::disk('filerobot')->put(null, json_encode($content),$config);
 ```
 
 ##### - Method 3 - base64-encoded content
 ``` php
-$image = base64_encode(file_get_contents('path/bear.jpeg'));
-return $this->filerobot->upload_file_binary('new_image_from_base64.png', $image)
+$config = [
+			'name' => 'api-demo',
+			'type' => 'base64'
+		];
+$image  = base64_encode(file_get_contents('4090e6607e8bea2c9845b12630a927fd.jpg'));
+$name_upload = 'test01.png';
+Storage::disk('filerobot')->put($name_upload, $image,$config);
 ```
 
 ### Folders operations
 #### List and search folders 
 Lists all folders in your Filerobot container. You can search by providing a search string. Can be recursive.
-``` php
-return $this->filerobot->list_folder('/api-demo');
-```
-| Parameter | Default | Description |
-| --- | --- | --- |
-| folder | | Folder to start the search from. Case sensitive. |
-| query | | (optional) Search pattern matching the folder name or metadata. |
-| order | filename,desc | (optional) Order results by: updated_at created_at Append ,asc or ,desc to get ascending or descending results. Example: updated_at,desc|
-| limit | 50 | (optional) Specifies the maximum number of folders to return. [1-4000].|
-| offset | 0 | (optional) Specifies the offset of files to display.|
 
 #### Get folder details
 Gets all information of a folder identified by its folder_uuid. This API will also allow you to check the existence of a folder.
 ``` php
-return $this->filerobot->detail_folder($folder_uuid);
+return Storage::disk('filerobot')->read('63accfbe-d1a1-502b-a1f6-47397645000e');
 ```
 
 #### Rename folder
 Renames the folder identified by its folder_uuid to the value given in the body
 ``` php
-return $this->filerobot->rename_folder($folder_uuid, $new_foldername);
+return Storage::disk('filerobot')->rename($uuid, $name_change);
 ```
 
 #### Move folder
 Will move a folder, identified by its folder_uuid to a new location (folder) which can be identified by destination_folder_uuid.
 ``` php
-return $this->filerobot->move_folder($folder_uuid, $destination_folder_uuid);
+return Storage::disk('filerobot')->copy($uuid, $name_change);
 ```
 
 #### Delete folder
 Deletes a folder _and all sub-folders recursively_.
 ``` php
-return $this->filerobot->delete_folder($folder_uuid);
+return Storage::disk('filerobot')->deleteDirectory($file_uuid);
 ```
 
 #### Create folder
 Creates a folder from the value given in the body.
 ``` php
-return $this->filerobot->create_folder($foldername)
+return Storage::disk('filerobot')->makeDirectory($file_uuid);
 ```
 
