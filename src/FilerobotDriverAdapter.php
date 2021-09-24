@@ -245,7 +245,7 @@ class FilerobotDriverAdapter extends AbstractAdapter
 	 */
 	public function listContents($directory = '', $recursive = false)
 	{
-		$listing = $this->scaleflex->list_folder($directory);
+		$listing = $this->scaleflex->list_file($directory);
 
 		return $this->normaliseObject($listing, $directory);
 	}

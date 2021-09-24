@@ -22,6 +22,9 @@ Your .env
 FILEROBOT_KEY_ID=fa5fe3303dd34e1da4810915c7c3fd6f
 ```
 ## Usage
+``` php
+FILEROBOT_KEY_ID=fa5fe3303dd34e1da4810915c7c3fd6f
+```
 ### Files operations
 #### List or search files
 Lists all files in your Filerobot container. You can alternatively search by providing a search string. Can be recursive.
