@@ -251,7 +251,6 @@ class FilerobotDriverAdapter extends AbstractAdapter
 	{
 		$arrayDirector = explode(':',$directory);
 		$parsDirectory = str_replace($arrayDirector[0].':','/',$directory);
-
 		$result = '';
 		
 		if($arrayDirector[0] == 'file'){
