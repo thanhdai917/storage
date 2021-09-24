@@ -228,7 +228,7 @@ class FilerobotDriverAdapter extends AbstractAdapter
 		}
 
 		return [
-			'error' => 'Uuid not working please try again'
+			'contents' => 'Uuid not working please try again'
 		];
 	}
 
