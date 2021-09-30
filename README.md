@@ -65,17 +65,10 @@ return Storage::disk('filerobot')->delete($file_uuid);
 #### Upload files
 Multiple methods are available to suit different needs
 
-``` php
-$config = [
-    'name' => folder_name,
-    'type' => method_upload
-];
-Storage::disk('filerobot')->put($name_upload, $image,$config);
-```
 ##### - Method 1 - multipart/form-data request
 ``` php
 $config = [
-    'name' => 'api-demo',
+    'name' => foder_name, // example '/api-demo'
     'type' => 'multipart'
 ];
 $image = public_path('4090e6607e8bea2c9845b12630a927fd.jpg');
@@ -86,7 +79,7 @@ Storage::disk('filerobot')->put($name_upload, $image,$config);
 ##### - Method 2 - URL(s) of remotely hosted file(s)
 ``` php
 $config = [
-    'name' => 'api-demo',
+    'name' => forde_name, // example '/api-demo'
     'type' => 'remote'
 ];
 $content = [
@@ -102,10 +95,21 @@ Storage::disk('filerobot')->put(null, json_encode($content),$config);
 ##### - Method 3 - base64-encoded content
 ``` php
 $config = [
-    'name' => 'api-demo',
+    'name' => folder_name, // example '/api-demo'
     'type' => 'base64'
 ];
 $image  = base64_encode(file_get_contents('4090e6607e8bea2c9845b12630a927fd.jpg'));
+$name_upload = 'test01.png';
+Storage::disk('filerobot')->put($name_upload, $image,$config);
+```
+
+##### - Upload file stream
+``` php
+$config = [
+    'name' => folder_name, // example '/api-demo'
+];
+
+$image  = fopen(public_path('4090e6607e8bea2c9845b12630a927fd.jpg'),"r");
 $name_upload = 'test01.png';
 Storage::disk('filerobot')->put($name_upload, $image,$config);
 ```

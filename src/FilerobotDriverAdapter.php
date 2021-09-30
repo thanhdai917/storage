@@ -58,14 +58,14 @@ class FilerobotDriverAdapter extends AbstractAdapter
 	public function upload($path, $content, Config $config)
 	{
 		if (is_resource($content)) {
-			$this->scaleflex->stream_upload_file($path, $content, $config->get('name'));
+			$this->scaleflex->stream_upload_file($config->get('name'), $content, $path);
 		} else {
 			switch ($config->get('type')) {
 				case 'base64':
 					$this->scaleflex->upload_file_binary('/'.str_replace('/','',$config->get('name')).'/'.$path, $content);
 					break;
 				case 'multipart':
-					$this->scaleflex->upload_file_multipart($path, $content, $config->get('name'));
+					$this->scaleflex->upload_file_multipart($config->get('name'), $content, $path);
 					break;
 				case 'remote':
 					$this->scaleflex->upload_file_remote($config->get('name'), $content);
