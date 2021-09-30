@@ -62,10 +62,10 @@ class FilerobotDriverAdapter extends AbstractAdapter
 		} else {
 			switch ($config->get('type')) {
 				case 'base64':
-					$this->scaleflex->upload_file_binary($config->get('name').'/'.$path, $content);
+					$this->scaleflex->upload_file_binary('/'.str_replace('/','',$config->get('name')).'/'.$path, $content);
 					break;
 				case 'multipart':
-					$this->scaleflex->upload_file_multipart($config->get('name'), $content, $path);
+					$this->scaleflex->upload_file_multipart($path, $content, $config->get('name'));
 					break;
 				case 'remote':
 					$this->scaleflex->upload_file_remote($config->get('name'), $content);
@@ -239,7 +239,6 @@ class FilerobotDriverAdapter extends AbstractAdapter
 	{
 		$contents['stream'] = $this->checkPathIs($path);
 
-//		dd($this->readStream($path));
 		return $contents;
 	}
 
