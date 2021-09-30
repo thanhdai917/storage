@@ -43,21 +43,11 @@ class FilerobotDriverAdapter extends AbstractAdapter
 	 * @param          $resource
 	 * @param  Config  $config
 	 *
-	 * @return array|false|void
+	 * @return void
 	 */
 	public function writeStream($path, $resource, Config $config)
 	{
 		return $this->upload($path, $resource, $config);
-	}
-
-	/**
-	 * @param          $path
-	 * @param          $contents
-	 * @param  Config  $config
-	 */
-	public function write($path, $contents, Config $config)
-	{
-		return $this->upload($path, $contents, $config);
 	}
 
 	/**
@@ -68,7 +58,7 @@ class FilerobotDriverAdapter extends AbstractAdapter
 	public function upload($path, $content, Config $config)
 	{
 		if (is_resource($content)) {
-
+			$this->scaleflex->stream_upload_file($path, $content, $config->get('name'));
 		} else {
 			switch ($config->get('type')) {
 				case 'base64':
@@ -91,10 +81,19 @@ class FilerobotDriverAdapter extends AbstractAdapter
 	 * @param          $contents
 	 * @param  Config  $config
 	 */
+	public function write($path, $contents, Config $config)
+	{
+		return $this->upload($path, $contents, $config);
+	}
+
+	/**
+	 * @param          $path
+	 * @param          $contents
+	 * @param  Config  $config
+	 */
 	public function update($path, $contents, Config $config)
 	{
-		echo 'update';
-		// TODO: Implement update() method.
+		return $this->upload($path, $contents, $config);
 	}
 
 	/**
@@ -104,8 +103,7 @@ class FilerobotDriverAdapter extends AbstractAdapter
 	 */
 	public function updateStream($path, $resource, Config $config)
 	{
-		echo 'updateStream';
-		// TODO: Implement updateStream() method.
+		return $this->upload($path, $resource, $config);
 	}
 
 	/**
@@ -114,7 +112,7 @@ class FilerobotDriverAdapter extends AbstractAdapter
 	 *
 	 * @return string[]
 	 */
-	public function rename($path, $newpath)
+	public function rename($path, $newpath): array
 	{
 		$checkPathIs = $this->checkPathIs($path);
 		if (!empty($checkPathIs['file'])) {
@@ -147,7 +145,7 @@ class FilerobotDriverAdapter extends AbstractAdapter
 	 *
 	 * @return string[]
 	 */
-	public function copy($path, $newpath)
+	public function copy($path, $newpath): array
 	{
 		$checkPathIs = $this->checkPathIs($path);
 		if (!empty($checkPathIs['file'])) {
@@ -158,7 +156,6 @@ class FilerobotDriverAdapter extends AbstractAdapter
 		return [
 			'error' => 'Uuid not working please try again'
 		];
-		// TODO: Implement copy() method.
 	}
 
 	/**
@@ -169,7 +166,6 @@ class FilerobotDriverAdapter extends AbstractAdapter
 	public function delete($path)
 	{
 		return $this->scaleflex->delete_file($path);
-		// TODO: Implement delete() method.
 	}
 
 	/**
@@ -180,7 +176,6 @@ class FilerobotDriverAdapter extends AbstractAdapter
 	public function deleteDir($dirname)
 	{
 		return $this->scaleflex->delete_folder($dirname);
-		// TODO: Implement deleteDir() method.
 	}
 
 	/**
@@ -191,9 +186,7 @@ class FilerobotDriverAdapter extends AbstractAdapter
 	 */
 	public function createDir($dirname, Config $config)
 	{
-
 		return $this->scaleflex->create_folder($dirname);
-		// TODO: Implement createDir() method.
 	}
 
 	/**
@@ -209,12 +202,11 @@ class FilerobotDriverAdapter extends AbstractAdapter
 	/**
 	 * @param $path
 	 *
-	 * @return mixed
+	 * @return string
 	 */
-	public function has($path)
+	public function has($path): string
 	{
-		$path = Util::normalizePath($path);
-		return $path;
+		return Util::normalizePath($path);
 	}
 
 	/**
@@ -224,13 +216,14 @@ class FilerobotDriverAdapter extends AbstractAdapter
 	 */
 	public function read($path)
 	{
-		$path     = $this->applyPathPrefix($path);
-		$result   = $this->checkPathIs($path);
+		$path   = $this->applyPathPrefix($path);
+		$result = $this->checkPathIs($path);
+
 		$contents = [];
 		if (!empty($result['file'])) {
 			$contents['contents'] = $result['file'];
 		} elseif (!empty($result['folder'])) {
-			$contents['contents'] = $result['file'];
+			$contents['contents'] = $result['folder'];
 		} else {
 			$contents['contents'] = 'Uuid not working please try again';
 		}
@@ -239,11 +232,15 @@ class FilerobotDriverAdapter extends AbstractAdapter
 
 	/**
 	 * @param $path
+	 *
+	 * @return array
 	 */
-	public function readStream($path)
+	public function readStream($path): array
 	{
-		echo 'readStream';
-		// TODO: Implement readStream() method.
+		$contents['stream'] = $this->checkPathIs($path);
+
+//		dd($this->readStream($path));
+		return $contents;
 	}
 
 	/**
@@ -313,28 +310,58 @@ class FilerobotDriverAdapter extends AbstractAdapter
 
 	/**
 	 * @param $path
+	 *
+	 * @return mixed|string
 	 */
 	public function getMetadata($path)
 	{
-		echo 'getMetadata';
-		// TODO: Implement getMetadata() method.
+		$result = $this->checkPathIs($path);
+
+		if (!empty($result['file'])) {
+			$contents = $result['file']['meta'];
+		} elseif (!empty($result['folder'])) {
+			$contents = $result['folder']['meta'];
+		} else {
+			$contents = 'Uuid not working please try again';
+		}
+		return $contents;
 	}
 
 	/**
 	 * @param $path
+	 *
+	 * @return mixed|string
 	 */
 	public function getSize($path)
 	{
-		echo 'getSize';
+		$result = $this->checkPathIs($path);
+
+		if (!empty($result['file'])) {
+			$contents = $result['file']['size'];
+		} elseif (!empty($result['folder'])) {
+			$contents = $result['folder']['size'];
+		} else {
+			$contents = 'Uuid not working please try again';
+		}
+		return $contents;
 		// TODO: Implement getSize() method.
 	}
 
 	/**
 	 * @param $path
+	 *
+	 * @return mixed|string
 	 */
 	public function getMimetype($path)
 	{
-		echo 'getMimetype';
+		$result = $this->checkPathIs($path);
+
+		if (!empty($result['file'])) {
+			$contents = $result['file']['type'];
+		} else {
+			$contents = 'Uuid not file please try again';
+		}
+		return $contents;
 		// TODO: Implement getMimetype() method.
 	}
 
@@ -349,10 +376,20 @@ class FilerobotDriverAdapter extends AbstractAdapter
 
 	/**
 	 * @param $path
+	 *
+	 * @return mixed|string
 	 */
 	public function getVisibility($path)
 	{
-		echo 'getVisibility';
-		// TODO: Implement getVisibility() method.
+		$result = $this->checkPathIs($path);
+
+		if (!empty($result['file'])) {
+			$contents = $result['file']['visibility'];
+		} elseif (!empty($result['folder'])) {
+			$contents = $result['folder']['visibility'];
+		} else {
+			$contents = 'Uuid not working please try again';
+		}
+		return $contents;
 	}
 }
