@@ -7,9 +7,13 @@ use League\Flysystem\Util;
 use League\Flysystem\Config;
 use Scaleflex\Filerobot\FilerobotAdapter;
 use League\Flysystem\Adapter\AbstractAdapter;
-use League\Flysystem\Adapter\CanOverwriteFiles;
 use League\Flysystem\Adapter\Polyfill\StreamedReadingTrait;
 
+/**
+ * Class FilerobotDriverAdapter
+ *
+ * @package Thanhdai\Storage
+ */
 class FilerobotDriverAdapter extends AbstractAdapter
 {
 	use StreamedReadingTrait;
@@ -38,10 +42,12 @@ class FilerobotDriverAdapter extends AbstractAdapter
 	 * @param          $path
 	 * @param          $resource
 	 * @param  Config  $config
+	 *
+	 * @return array|false|void
 	 */
 	public function writeStream($path, $resource, Config $config)
 	{
-		return $this->write($path, $resource, $config);
+		return $this->upload($path, $resource, $config);
 	}
 
 	/**
@@ -66,7 +72,7 @@ class FilerobotDriverAdapter extends AbstractAdapter
 		} else {
 			switch ($config->get('type')) {
 				case 'base64':
-					$this->scaleflex->upload_file_binary($path, $content);
+					$this->scaleflex->upload_file_binary($config->get('name').'/'.$path, $content);
 					break;
 				case 'multipart':
 					$this->scaleflex->upload_file_multipart($config->get('name'), $content, $path);
@@ -186,8 +192,7 @@ class FilerobotDriverAdapter extends AbstractAdapter
 	public function createDir($dirname, Config $config)
 	{
 
-		$this->scaleflex->create_folder($dirname);
-		return $this->normaliseObject($listing, $directory);
+		return $this->scaleflex->create_folder($dirname);
 		// TODO: Implement createDir() method.
 	}
 
@@ -219,14 +224,14 @@ class FilerobotDriverAdapter extends AbstractAdapter
 	 */
 	public function read($path)
 	{
-		$path   = $this->applyPathPrefix($path);
-		$result = $this->checkPathIs($path);
+		$path     = $this->applyPathPrefix($path);
+		$result   = $this->checkPathIs($path);
 		$contents = [];
 		if (!empty($result['file'])) {
 			$contents['contents'] = $result['file'];
 		} elseif (!empty($result['folder'])) {
 			$contents['contents'] = $result['file'];
-		}else{
+		} else {
 			$contents['contents'] = 'Uuid not working please try again';
 		}
 		return $contents;
@@ -249,34 +254,16 @@ class FilerobotDriverAdapter extends AbstractAdapter
 	 */
 	public function listContents($directory = '', $recursive = false)
 	{
-		$arrayDirector = explode(':',$directory);
-		$parsDirectory = str_replace($arrayDirector[0].':','/',$directory);
-		$result = '';
-		
-		if($arrayDirector[0] == 'file'){
-			$listing = $this->scaleflex->list_file($parsDirectory);
-			$result = $this->normaliseObject($listing, $directory);
-		}elseif($arrayDirector[0] == 'folder'){
-			$listing = $this->scaleflex->list_folder($parsDirectory);
-			$result = $this->normaliseObjectFolder($listing, $directory);
-		}
-		return $result;
-	}
+		$arrayDirector = explode(':', $directory);
+		$parsDirectory = str_replace($arrayDirector[0].':', '/', $directory);
+		$result        = '';
 
-	/**
-	 * Get normalised files array
-	 *
-	 *
-	 * @return array Normalised files array
-	 */
-	protected function normaliseObjectFolder($array, $path): array
-	{
-		$result = [];
-		foreach ($array['folders'] as $key => $row) {
-			$result[$key]['uuid']        = $row['uuid'];
-			$result[$key]['name']        = $row['name'];
-			$result[$key]['path']        = $row['path'];
-			$result[$key]['dirname']     = $path;
+		if ($arrayDirector[0] == 'file') {
+			$listing = $this->scaleflex->list_file($parsDirectory);
+			$result  = $this->normaliseObject($listing, $directory);
+		} elseif ($arrayDirector[0] == 'folder') {
+			$listing = $this->scaleflex->list_folder($parsDirectory);
+			$result  = $this->normaliseObjectFolder($listing, $directory);
 		}
 		return $result;
 	}
@@ -305,6 +292,25 @@ class FilerobotDriverAdapter extends AbstractAdapter
 		}
 		return $result;
 	}
+
+	/**
+	 * Get normalised files array
+	 *
+	 *
+	 * @return array Normalised files array
+	 */
+	protected function normaliseObjectFolder($array, $path): array
+	{
+		$result = [];
+		foreach ($array['folders'] as $key => $row) {
+			$result[$key]['uuid']    = $row['uuid'];
+			$result[$key]['name']    = $row['name'];
+			$result[$key]['path']    = $row['path'];
+			$result[$key]['dirname'] = $path;
+		}
+		return $result;
+	}
+
 	/**
 	 * @param $path
 	 */
