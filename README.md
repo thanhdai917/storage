@@ -6,7 +6,7 @@
 
 Simple installation via Composer
 ```bash
-composer require thanhdai/storage
+composer require filerobot/storage
 ```
 
 Your config/filesystems.php.
