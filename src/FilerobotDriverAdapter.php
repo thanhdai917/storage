@@ -252,8 +252,8 @@ class FilerobotDriverAdapter extends AbstractAdapter
 	{
 		$arrayDirector = explode(':', $directory);
 		$parsDirectory = str_replace($arrayDirector[0].':', '/', $directory);
+		$parsDirectory = str_replace('//', '/', $parsDirectory);
 		$result        = '';
-
 		if ($arrayDirector[0] == 'file') {
 			$listing = $this->scaleflex->list_file($parsDirectory);
 			$result  = $this->normaliseObject($listing, $directory);
@@ -272,19 +272,18 @@ class FilerobotDriverAdapter extends AbstractAdapter
 	protected function normaliseObject($array, $path): array
 	{
 		$result = [];
-		foreach ($array['files'] as $key => $row) {
-			$result[$key]['uuid']        = $row['uuid'];
-			$result[$key]['name']        = $row['name'];
-			$result[$key]['path']        = $row['name'];
-			$result[$key]['extension']   = $row['extension'] ?? '';
-			$result[$key]['size']        = $row['size'];
-			$result[$key]['flags']       = $row['flags'];
-			$result[$key]['type']        = $row['type'];
-			$result[$key]['meta']        = $row['meta'];
-			$result[$key]['dirname']     = $path;
-			$result[$key]['tags']        = $row['tags'];
-			$result[$key]['url']         = $row['url'];
-			$result[$key]['modified_at'] = $row['modified_at'];
+		if(!empty($array['files'])) {
+			foreach ($array['files'] as $key => $row) {
+				foreach($row as $key01 => $value) {
+					$result[$key][$key01] = $value;
+				}
+				$result[$key]['dirname'] = $path;
+				$result[$key]['path'] = $path;
+			}
+		} else {
+			$array['dirname'] = $path;
+			$array['path'] = $path;
+			$result[] = $array;
 		}
 		return $result;
 	}
@@ -298,11 +297,17 @@ class FilerobotDriverAdapter extends AbstractAdapter
 	protected function normaliseObjectFolder($array, $path): array
 	{
 		$result = [];
-		foreach ($array['folders'] as $key => $row) {
-			$result[$key]['uuid']    = $row['uuid'];
-			$result[$key]['name']    = $row['name'];
-			$result[$key]['path']    = $row['path'];
-			$result[$key]['dirname'] = $path;
+		if(!empty($array['folders'])) {
+			foreach ($array['folders'] as $key => $row) {
+				foreach($row as $key01 => $value) {
+					$result[$key][$key01] = $value;
+				}
+				$result[$key]['dirname'] = $path;
+			}
+		} else {
+			$array['dirname'] = $path;
+			$array['path'] = $path;
+			$result[] = $array;
 		}
 		return $result;
 	}

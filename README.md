@@ -28,13 +28,13 @@ Storage::disk('filerobot')
 ### Files operations
 #### List or search files
 Lists all files in your Filerobot container. You can alternatively search by providing a search string. Can be recursive.
-example: type:folder_name
+example: type:folder_namew
 ``` php
-return Storage::disk('filerobot')->listContents('file-api-demo', false);
+return Storage::disk('filerobot')->listContents('folder:api-demo', false);
 ```
 You can add collect.
 ``` php
-return collect(Storage::disk('filerobot')->listContents('file-api-demo', false))->where('name','test01')->first();
+return collect(Storage::disk('filerobot')->listContents('folder:api-demo', false))->where('name','test01')->first();
 ```
 
 #### Get file or folder details
@@ -119,7 +119,7 @@ Storage::disk('filerobot')->put($name_upload, $image,$config);
 Lists all folders in your Filerobot container. You can search by providing a search string. Can be recursive.
 example: type:folder_name
 ``` php
-return Storage::disk('filerobot')->listContents('folder-api-demo', false);
+return Storage::disk('filerobot')->listContents('folder:api-demo', false);
 ```
 #### Get folder details
 Gets all information of a folder identified by its folder_uuid. This API will also allow you to check the existence of a folder.
